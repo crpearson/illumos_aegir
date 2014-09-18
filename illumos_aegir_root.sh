@@ -21,6 +21,7 @@ export PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/l
 
 # DaFu? php53-process, php53-xml, php-drush-drush
 pkgin -y in apache-2.2 \
+ap22-php53 \
 postfix \
 unzip \
 mysql-server \
@@ -43,6 +44,8 @@ php53-memcache \
 php53-pdo_mysql \
 php53-zlib
 
+echo "INFO: Setting up applications"
+
 awk '/extension=modulename.extension/{print $0 \
 RS "extension=apc.so" \
 RS "extension=curl.so" \
@@ -59,12 +62,24 @@ RS "extension=posix.so" \
 RS "extension=memcache.so";
 next}1' /opt/local/etc/php.ini > /var/tmp/scratch && mv /var/tmp/scratch /opt/local/etc/php.ini
 
+awk '/LoadModule rewrite_module lib\/httpd\/mod_rewrite.so/{print $0 \
+RS "LoadModule php5_module lib/httpd/mod_php5.so";
+next}1' /opt/local/etc/httpd/httpd.conf > /var/tmp/httpd_scratch && mv /var/tmp/httpd_scratch /opt/local/etc/httpd/httpd.conf
+
+awk '/AddHandler cgi-script .cgi/{print $0 \
+RS "AddHandler application/x-httpd-php .php";
+next}1' /opt/local/etc/httpd/httpd.conf > /var/tmp/httpd_scratch && mv /var/tmp/httpd_scratch /opt/local/etc/httpd/httpd.conf
+
+sed -i 's/DirectoryIndex index.html/DirectoryIndex index.html index.php/g' /opt/local/etc/httpd/httpd.conf
+
 echo " INFO: Raising PHP's memory limit to 512M"
 sed -i 's/^memory_limit = .*$/memory_limit = 512M/g' /opt/local/etc/php.ini 
 
 echo " INFO: Restarting httpd and mysqld"
 svcadm enable mysql
 svcadm restart mysql
+svcaem enable apache
+svcadm restart apache
 
 
 mysql -uroot -e 'show databases;' > /dev/null 2>&1
@@ -126,11 +141,10 @@ drush_upgrade(){ #upgrade drush to latest
 pear upgrade
 pear channel-discover pear.drush.org
 pear install drush/drush
+# Hack
+chgrp www /opt/local/lib/php/drush/lib
+chmod 775 /opt/local/lib/php/drush/lib
+# /Hack
 }
 
 drush_upgrade
-
-# Hack
-chgrp www /opt/local/lib/php/drush/lib
-chown 775 /opt/local/lib/php/drush/lib
-# /Hack
