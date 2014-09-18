@@ -83,7 +83,7 @@ svcadm restart apache
 
 
 mysql -uroot -e 'show databases;' > /dev/null 2>&1
-if [ $? -eq 0 ]
+if [ $? -eq 1 ]
 then 
 	/opt/local/bin/mysql_secure_installation
 else
@@ -97,6 +97,7 @@ useradd -d $WEBHOME -G www aegir
 #groupadd apache
 chmod -R 755 $WEBHOME
 echo "aegir" >> /etc/cron.d/cron.allow
+passwd -N aegir
 
 ! [ -d $WEBHOME ] && mkdir $WEBHOME
 chown aegir.www $WEBHOME
