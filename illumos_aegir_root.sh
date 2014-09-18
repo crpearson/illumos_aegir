@@ -23,6 +23,7 @@ export PATH=/opt/local/bin:/usr/local/sbin:/usr/local/bin:/opt/local/sbin:/opt/l
 pkgin -y in apache-2.2 \
 ap22-php53 \
 postfix \
+hs-utf8-string \
 unzip \
 mysql-server \
 php53 \

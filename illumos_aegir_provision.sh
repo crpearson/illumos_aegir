@@ -55,8 +55,8 @@ crontab -l | grep cron > /dev/null 2>&1
 if ! [ $? -eq 0 ]
 then
 	crontab -l > /tmp/cron.aegir
-	#echo "45 1 * * * /opt/local/bin/drush -y @sites up" >> /tmp/cron.aegir
-	#echo "0 3 * * * /opt/local/bin/drush -y @hostmaster up" >> /tmp/cron.aegir
+	echo "45 1 * * * /opt/local/bin/drush -y @sites up" >> /tmp/cron.aegir
+	echo "0 3 * * * /opt/local/bin/drush -y @hostmaster up" >> /tmp/cron.aegir
 	echo "29 * * * * /opt/local/bin/drush -y @hostmaster cron > /dev/null" 
 	crontab /tmp/cron.aegir
 	rm -rf /tmp/cron.aegir
