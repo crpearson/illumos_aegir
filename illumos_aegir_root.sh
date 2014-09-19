@@ -1,8 +1,12 @@
 #!/bin/sh
 version=0.1
 
+# This is a quickly done port of the aegir v2 script at http://community.aegirproject.org
+# Instructions from http://community.aegirproject.org/installing/manual
+
 # this script is only for illumos based systems using pkgsrc
 # I have removed all of the OS checks. If you are running an illumos distro with pkgsrc, you probably know it and don't need help
+# It assumes you are running it on a new zone.
 
 ##############variables to change#########################
 
